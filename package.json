@@ -1,0 +1,16 @@
+{
+  "name": "serverless-ci-cd",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "youssef maghzaz <youssefmaghzaz@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ysfmag/serverless-ci-cd.git"
+  },
+  "keywords": [
+    "serverless",
+    "ci-cd",
+    "serverless-plugin"
+  ]
+}
