@@ -1,5 +1,5 @@
 "use strict";
-var sys = require("sys");
+
 var exec = require("child_process").exec;
 let stage_name_variable = "stagenamevariables";
 let directory = ".serverless";
@@ -34,13 +34,11 @@ class ServerlessPlugin {
   }
 
   package_ci() {
-    exec(
-      `sls package  --stage ${stage_name_variable}`,
-      (err, stdout, stderr) => {
-        this.serverless.cli.log(stdout);
-      }
-    );
-    this.serverless.cli.log("dddd:dddd");
+    this.serverless.cli.log("package_ci");
+    let packageProcess = exec(`sls package  --stage ${stage_name_variable}`);
+    packageProcess.stdout.on("data", data => {
+      console.log(data);
+    });
   }
 
   beforDeploy() {
