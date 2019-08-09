@@ -18,7 +18,9 @@ yarn add  serverless-ci-cd
 
 ## Usage
 
-This lib help you setup ci/cd workflow , in the build setp you dont need to specify the stage name , and for the release step you will use the artifacts generate in the build step to deploy in your prefer stage (dev , prod , ...)
+This lib help you setup ci/cd workflow .
+In the build step you dont need to specify the stage name .
+In the release step you will use the artifacts generate in the build step to deploy in your prefer stage (dev , prod , ...)
 
 
 ## Configuration
