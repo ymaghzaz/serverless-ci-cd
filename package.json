@@ -1,6 +1,6 @@
 {
   "name": "serverless-ci-cd",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "main": "index.js",
   "author": "youssef maghzaz <youssefmaghzaz@gmail.com>",
   "license": "MIT",
