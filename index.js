@@ -30,6 +30,7 @@ class ServerlessPlugin {
   constructor(serverless, options) {
     this.serverless = serverless;
     this.options = options;
+
     this.commands = {
       "package-ci": {
         lifecycleEvents: ["package"]
@@ -38,37 +39,41 @@ class ServerlessPlugin {
         lifecycleEvents: ["deploy"]
       }
     };
+
+    if (this.serverless.processedInput.commands[0] == "package-ci") {
+      this.options.stage = stage_name_variable;
+      this.serverless.service.provider.stage = stage_name_variable;
+      this.serverless.config.stage = stage_name_variable;
+      this.serverless.processedInput = {
+        commands: ["package-ci"],
+        options: { s: stage_name_variable, stage: stage_name_variable }
+      };
+    }
+
     this.hooks = {
       "before:package-ci:package": this.package_ci.bind(this),
-      "before:deploy-cd:deploy": this.beforDeploy.bind(this),
-      "after:deploy:deploy": this.afterDeploy.bind(this)
+      "before:deploy-cd:deploy": this.beforDeploy.bind(this)
+      // "after:deploy:deploy": this.afterDeploy.bind(this)
     };
   }
 
   package_ci() {
-    this.serverless.cli.log("package_ci");
-    var packageProcess = exec(
-      `sls package  --stage ${stage_name_variable} --verbose`
-    );
-    packageProcess.stdout.on("data", data => {
-      console.log(data);
+    this.serverless.pluginManager.spawn("package", {
+      stage: stage_name_variable,
+      s: stage_name_variable
     });
   }
 
   async beforDeploy() {
     console.log("this.options", this.options);
+    this.serverless.service.provider.stage = this.options.stage;
     this.serverless.cli.log("start:deploy");
-    this.serverless.cli.log("file1");
     await changeStringInFile(
       "cloudformation-template-update-stack.json",
       this.options.stage
     );
-    this.serverless.cli.log("file2");
     await changeStringInFile("serverless-state.json", this.options.stage);
     this.serverless.pluginManager.spawn("deploy");
-  }
-  afterDeploy() {
-    console.log(okey);
   }
 }
 
