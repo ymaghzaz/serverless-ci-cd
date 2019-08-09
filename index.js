@@ -1,21 +1,15 @@
 "use strict";
-
+var sys = require("sys");
 var exec = require("child_process").exec;
-let stage_name_variable = "stagenamevariables";
+let stage_name_variable = "stagenamevariable";
 let directory = ".serverless";
+var fs = require("fs");
+
 const changeStringInFile = (fileName, newString) => {
-  var fs = require("fs");
-
-  fs.readFile(`${directory}/${fileName}`, "utf8", function(err, data) {
-    if (err) {
-      return console.log(err);
-    }
-    var result = data.replace(`/${stage_name_variable}/g`, newString);
-
-    fs.writeFile(`${directory}/${fileName}`, result, "utf8", function(err) {
-      if (err) return console.log(err);
-    });
-  });
+  exec(
+    `sed -i'.original' -e 's/stagenamevariable/'${newString}'/g' ${directory}/${fileName}`
+  );
+  exec(`rm ${directory}/${fileName}.original`);
 };
 
 class ServerlessPlugin {
@@ -35,21 +29,21 @@ class ServerlessPlugin {
 
   package_ci() {
     this.serverless.cli.log("package_ci");
-    let packageProcess = exec(`sls package  --stage ${stage_name_variable}`);
+    var packageProcess = exec(
+      `sls package  --stage ${stage_name_variable} --verbose`
+    );
     packageProcess.stdout.on("data", data => {
       console.log(data);
     });
   }
 
   beforDeploy() {
+    this.serverless.cli.log("start:deploy");
     changeStringInFile(
       "cloudformation-template-update-stack.json",
       this.options.stage
     );
     changeStringInFile("serverless-state.json", this.options.stage);
-    this.serverless.cli.log(
-      "afterPackageFinalize:afterPackageFinalize:afterPackageFinalize"
-    );
   }
 }
 
